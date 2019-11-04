@@ -1,0 +1,2 @@
+[28-Apr-2019 10:37:15 UTC] PHP Warning:  mysqli_connect(): (HY000/2002): Can't connect to local MySQL server through socket '/var/lib/mysql/mysql.sock' (2) in /home/mblea780/public_html/config/dbconnect.php on line 6
+[28-Apr-2019 10:37:15 UTC] PHP Fatal error:  Could not connect to the database in /home/mblea780/public_html/config/dbconnect.php on line 9
