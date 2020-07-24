@@ -1,5 +1,4 @@
 .htaccess
 config/dbconnect.php
 data/user/
-.htaccess
-config/dbconnect.php
+
