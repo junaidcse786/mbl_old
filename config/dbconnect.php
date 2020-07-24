@@ -3,7 +3,7 @@
 	session_start();
 	
 	date_default_timezone_get();	
-	$db = mysqli_connect("localhost","root","", "test");
+	$db = mysqli_connect("localhost","root","", "mbl");
 	
 	if(!($db))
      	trigger_error("Could not connect to the database", E_USER_ERROR);
