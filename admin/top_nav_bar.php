@@ -157,8 +157,30 @@
 					<li class="separator hide">
 					</li>
                     
-                    <?php } ?>
-				
+					<?php } ?>
+				<?php if($_SESSION['role_id'] == 15): ?>	
+				<li class="dropdown dropdown-user">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
+					<span class="username">Konto umschalten</span>
+					<i class="fa fa-angle-down"></i>
+					</a>
+					<ul class="dropdown-menu dropdown-menu-default">
+						<?php
+							$sqlBatch = "select * from ".$db_suffix."batch_teacher where user_id = '".$_SESSION["user_id"]."'";
+							$queryBatch = mysqli_query($db, $sqlBatch);
+							while($orgObj = mysqli_fetch_object($queryBatch)):
+								
+						?>
+
+						<li>
+							<a href="<?php echo SITE_URL_ADMIN.'change-batch.php?id='.$orgObj->id; ?>">
+							<?php echo $orgObj->user_org_name. ' - '. $orgObj->user_level; ?></a>
+						</li>							
+
+						<?php endwhile; ?>
+					</ul>
+				</li>
+				<?php endif; ?>
 				<li class="dropdown dropdown-user">
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" data-close-others="true">
 					
@@ -184,7 +206,7 @@
 							<a href="<?php echo SITE_URL_ADMIN.'?mKey=myaccount'; ?>">
 							<i class="icon-user"></i> Mein Profil </a>
 						</li>
-                        <li>
+						<li>
 							<a href="<?php echo SITE_URL_ADMIN.'?mKey=inbox'; ?>">
 							<i class="icon-envelope-open"></i> Postfach <?php echo $unseen; ?></a>
 						</li>

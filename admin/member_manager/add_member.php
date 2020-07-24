@@ -65,14 +65,14 @@ if(isset($_POST['Submit'])){
 		}
 	} */
 	
-	if(empty($codes_org_name))
+	if(empty($codes_org_name) || count(explode('-', $codes_org_name))<=1)
 	{
 		$messages["codes_org_name"]["status"]=$err_easy;
-		$messages["codes_org_name"]["msg"]="Organisation Name is Required";;
+		$messages["codes_org_name"]["msg"]="Organisation Name is not complete";;
 		$err++;		
 	}
 	
-	if(empty($voc_set_level))
+	if($role_id != 15 &&empty($voc_set_level))
 	{
 		$messages["voc_set_level"]["status"]=$err_easy;
 		$messages["voc_set_level"]["msg"]="Batch name / level is required";
@@ -141,6 +141,17 @@ if(isset($_POST['Submit'])){
 		{
 			$user_description = addslashes($user_description);
 		}
+
+		$orgArray = [];
+
+		foreach(explode(',', $codes_org_name) as $org){
+
+				$orgArray[] = [
+
+					"org_name" => trim(explode('-', $org)[0]),
+					"level" => trim(explode('-', $org)[1])
+				];
+		}
 		
 		$sql_user = "INSERT INTO ".$db_suffix."user (role_id, user_first_name, user_last_name, user_name, user_email, user_password, user_photo, user_description, user_status, user_creation_date, user_validity_start, user_validity_end, user_org_name, user_level, user_trackability) 									
 								
@@ -150,6 +161,21 @@ if(isset($_POST['Submit'])){
 
 		if(mysqli_query($db,$sql_user))
 		{										
+			if($role_id == 15){
+
+				$user_id=mysqli_insert_id($db);
+
+				$sql_user_org = "INSERT INTO ".$db_suffix."batch_teacher (user_id, user_org_name, user_level) VALUES ";
+
+				foreach($orgArray as $item)
+
+					$sql_user_org.= "('".$user_id."', '".$item['org_name']."', '".$item['level']."'), ";
+
+				$sql_user_org = substr($sql_user_org, 0, -2);
+
+				mysqli_query($db,$sql_user_org);
+
+			}
 			if($_FILES["user_photo"]["name"]!='')
 			
 				move_uploaded_file($_FILES['user_photo']['tmp_name'], $image_dir.$image_name);
@@ -269,20 +295,27 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                            	  </div>
                               
                               <div class="form-group <?php echo $messages["codes_org_name"]["status"] ?>">
-                              		<label class="control-label col-md-3" for="codes_org_name">Organisation/school Name <span class="required">*</span></label>
-                              		<div class="col-md-4">
-                                 		<input type="text" placeholder="" class="form-control" name="codes_org_name" value="<?php echo $codes_org_name;?>"/>
-                                 		<span for="codes_org_name" class="help-block">Make sure the school name of the students and their corresponding teachers are exactly the same and also the level.<br /><?php echo $messages["codes_org_name"]["msg"] ?></span>
-                              		</div>
-                           	  </div>
-                              
-                              <div class="form-group <?php echo $messages["voc_set_level"]["status"] ?>">
-                                  <label for="voc_set_level" class="control-label col-md-3">  Batch Name / Level</label>
-                                  <div class="col-md-4">
-                                 		<input type="text" placeholder="e.g. A1/ Gruppe 1 - A1" class="form-control" name="voc_set_level" value="<?php echo $voc_set_level;?>"/>
-                                 		<span for="voc_set_level" class="help-block"><?php echo $messages["voc_set_level"]["msg"] ?></span>
-                              		</div>
-                              </div>
+								<label class="control-label col-md-3" for="codes_org_name">Organisation/school Name <span class="required">*</span></label>
+								<div class="col-md-<?php echo $role_id == 15? "9" : "4" ?>">
+									<input type="text" placeholder="" class="form-control" name="codes_org_name" value="<?php echo $codes_org_name;?>"/>
+										<span for="codes_org_name" class="help-block">Make sure the school name of the students and their corresponding teachers are exactly the same and also the level.<br />
+											<?php if($role_id == 15): ?>
+											<br />Seperate the school name and the language level with a -
+											<br />
+											For more schools and levels, seperate them with a ,
+											e.g. <b>Sprachenstudio Trivium - B1, Sprachenstudio Trivium - A1</b> <br /><br />
+											<?php endif; ?>
+										<?php echo $messages["codes_org_name"]["msg"] ?></span>
+								</div>
+							</div>
+								 
+								 <div class="form-group <?php echo $messages["voc_set_level"]["status"]; echo $role_id == 15? " hide" : "";  ?>">
+									<label for="voc_set_level" class="control-label col-md-3">  Batch Name / Level</label>
+									<div class="col-md-4">
+											<input type="text" placeholder="e.g. A1/ Gruppe 1 - A1" class="form-control" name="voc_set_level" value="<?php echo $voc_set_level;?>"/>
+											<span for="voc_set_level" class="help-block"><?php echo $messages["voc_set_level"]["msg"] ?></span>
+										</div>
+								</div>
                               
                               <div class="form-group <?php echo $messages["user_email"]["status"] ?>">
                               		<label class="control-label col-md-3" for="user_email">User Email <span class="required">*</span></label>

@@ -70,13 +70,13 @@
 							$alert_message="Ihr Konto ist inaktiv. Bitte wenden Sie sich an die Administratoren.";				
 						}
 						
-						if($result1["user_status"]==0)
+						/*if($result1["user_status"]==0)
 
 							{
 								$alert_box_show="show";
 								$alert_type="danger";
 								$alert_message="Ihr Konto ist inaktiv. Bitte kontaktieren Ihre Lehrkraft.";						
-							}	
+							}*/	
 
 						if($result1["user_status"]==2)
 
@@ -112,6 +112,8 @@
 						$_SESSION["user_panel"] = 1;
 
 						$_SESSION["front_user_id"] = $result1["user_id"];
+						
+						$_SESSION["front_user_status"] = $result1["user_status"];
 						
 						$_SESSION["front_user_level"] = $result1["user_level"];
 						
@@ -173,6 +175,23 @@
 
 						{
 
+							$sql = "select user_org_name, user_level from ".$db_suffix."batch_teacher where user_id = '".$result1['user_id']."' LIMIT 1";
+							$query = mysqli_query($db, $sql);
+							
+							if(mysqli_num_rows($query) > 0)
+							{
+								$content     = mysqli_fetch_object($query);	
+
+								$_SESSION["user_org_name"] = $content->user_org_name;
+								$_SESSION["user_level"] = $content->user_level;
+							}
+							else
+							{
+								$_SESSION["user_org_name"] = $result1["user_org_name"];
+							
+								$_SESSION["user_level"] = $result1["user_level"];
+							}
+							
 							$_SESSION["user_email"] = $result1["user_email"];
 		
 							$_SESSION["site_name"] = SITE_NAME;
@@ -182,10 +201,6 @@
 							$_SESSION["user_id"] = $result1["user_id"];
 		
 							$_SESSION["user_name"] = $result1["user_name"];
-							
-							$_SESSION["user_org_name"] = $result1["user_org_name"];
-							
-							$_SESSION["user_level"] = $result1["user_level"];
 							
 							$_SESSION["role_id"] = $result1["role_id"];
 							
@@ -451,6 +466,10 @@ if(isset($_POST["sign_up"])){
 		}
 		
 		else if($role_id==15){
+
+			$sql_user_org = "INSERT INTO ".$db_suffix."batch_teacher (user_id, user_org_name, user_level) VALUES ('".$user_id."', '".$user_org_name."', '".$user_level."')";
+
+			mysqli_query($db,$sql_user_org);
 		
 			$_SESSION["user_email"] = $user_email;
 		
@@ -492,8 +511,8 @@ if(isset($_POST["sign_up"])){
 <!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
 <!--[if !IE]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
 <!-- BEGIN HEAD -->
-<head>
-	<meta charset="utf-8" />
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	
 	<title>LOGIN | <?php echo SITE_NAME; ?></title>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta content="width=device-width, initial-scale=1.0" name="viewport" />

@@ -19,7 +19,7 @@ if(isset($_SESSION["user_panel"]) && isset($_SESSION["front_user_id"]) && $id!='
 	}
 	
 	
-	$sql = "select user_id from ".$db_suffix."user where user_org_name = '".$_SESSION["front_user_org_name"]."' AND user_level='".$_SESSION["front_user_level"]."' AND role_id='15' LIMIT 1";				
+	$sql = "select user_id from ".$db_suffix."batch_teacher where user_org_name = '".$_SESSION["front_user_org_name"]."' AND user_level='".$_SESSION["front_user_level"]."' LIMIT 1";				
 	$query = mysqli_query($db, $sql);
 	
 	if(mysqli_num_rows($query) > 0)

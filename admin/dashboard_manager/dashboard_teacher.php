@@ -197,7 +197,7 @@ if($_SESSION["role_id"]=='15')
                                   
                                    <td><?php 
 								   
-								   if($row->user_status==0 && $row->user_exe_status==1)
+								   if($row->user_status==0 || $row->user_exe_status==1)
 								   
 								   		echo '<label class="label bg-red">Inaktiv</label> <a data-href="'.$row->user_id.'" data-toggle="modal" href="#" data-target="#confirmation" class="btn default btn-xs green-jungle">Aktivieren</a>';
 										

@@ -24,8 +24,8 @@ $subtitle=''; //'Sent Messages to Admin or Teachers';
 <html lang="en" class="no-js">
 <!--<![endif]-->
 <!-- BEGIN HEAD -->
-<head>
-<meta charset="utf-8">
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
 <title><?php echo $title.' | '.SITE_NAME; ?></title>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta content="width=device-width, initial-scale=1" name="viewport">
@@ -81,8 +81,11 @@ $subtitle=''; //'Sent Messages to Admin or Teachers';
                             
                             <?php 
 	
+/*$sql = "select message_id from ".$db_suffix."message m
+		Left Join ".$db_suffix."user u on m.message_receiver=u.user_id where m.message_sender = '".$_SESSION["front_user_id"]."' AND m.sender_delete='0' AND m.message_report='0' ORDER BY m.message_created_time DESC";*/
+		
 $sql = "select message_id from ".$db_suffix."message m
-		Left Join ".$db_suffix."user u on m.message_receiver=u.user_id where m.message_sender = '".$_SESSION["front_user_id"]."' AND m.sender_delete='0' AND m.message_report='0' ORDER BY m.message_created_time DESC";
+		Left Join ".$db_suffix."user u on m.message_receiver=u.user_id where m.message_sender = '".$_SESSION["front_user_id"]."' AND m.sender_delete='0' ORDER BY m.message_created_time DESC";
 $news_query = mysqli_query($db,$sql);
 $num_messages=mysqli_num_rows($news_query);
 

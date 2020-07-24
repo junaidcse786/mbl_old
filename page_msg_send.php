@@ -288,7 +288,8 @@ if(!isset($_POST["Submit"]) && $_GET["s_factor"]==1)
 									   
 									   		echo'<option selected="selected" value="1">Administrator</option>';
 									   
-									   $sql_parent_menu = "SELECT user_first_name, user_last_name, user_id FROM ".$db_suffix."user where user_org_name='".$_SESSION["front_user_org_name"]."' AND user_level='".$_SESSION["front_user_level"]."' AND role_id='15'";	
+									   $sql_parent_menu = "SELECT u.user_first_name, u.user_last_name, u.user_id FROM ".$db_suffix."batch_teacher bt
+									   Left Join ".$db_suffix."user u on u.user_id=bt.user_id where bt.user_org_name='".$_SESSION["front_user_org_name"]."' AND bt.user_level='".$_SESSION["front_user_level"]."' AND u.role_id='15'";	
 										$parent_query = mysqli_query($db, $sql_parent_menu);
 										while($parent_obj = mysqli_fetch_object($parent_query))
 										{	

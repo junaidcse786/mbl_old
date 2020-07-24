@@ -20,6 +20,8 @@ if(isset($_SESSION["admin_panel"]) && isset($_GET['user_id']) && isset($_GET['us
         
         $_SESSION["front_user_level"] = $result1["user_level"];
         
+        $_SESSION["front_user_status"] = $result1["user_status"];
+        
         $_SESSION["front_user_org_name"] = $result1["user_org_name"];
         
         header('Location: '.SITE_URL.'my-account/');

@@ -100,6 +100,23 @@
 
 					{
 
+						$sql = "select user_org_name, user_level from ".$db_suffix."batch_teacher where user_id = '".$result1['user_id']."' LIMIT 1";
+						$query = mysqli_query($db, $sql);
+						
+						if(mysqli_num_rows($query) > 0)
+						{
+							$content     = mysqli_fetch_object($query);	
+
+							$_SESSION["user_org_name"] = $content->user_org_name;
+							$_SESSION["user_level"] = $content->user_level;
+						}
+						else
+						{
+							$_SESSION["user_org_name"] = $result1["user_org_name"];
+						
+							$_SESSION["user_level"] = $result1["user_level"];
+						}
+						
 						$_SESSION["user_email"] = $result1["user_email"];
 	
 						$_SESSION["site_name"] = SITE_NAME;
@@ -109,10 +126,6 @@
 						$_SESSION["user_id"] = $result1["user_id"];
 	
 						$_SESSION["user_name"] = $result1["user_name"];
-						
-						$_SESSION["user_org_name"] = $result1["user_org_name"];
-						
-						$_SESSION["user_level"] = $result1["user_level"];
 						
 						$_SESSION["role_id"] = $result1["role_id"];
 						
@@ -331,10 +344,17 @@ if(isset($_POST["sign_up"])){
 	if($err==0){	
 		$sql_user="INSERT INTO ".$db_suffix."user (role_id, user_email, user_first_name, user_last_name, user_name, user_password, user_status, user_creation_date, user_org_name, user_validity_start, user_validity_end, user_trackability, user_level) values ('15','$user_email', '$user_first_name', '$user_last_name', '$user_name', '".md5($user_password)."', '1','".date('Y-m-d H:i:s')."', '$user_org_name', '$user_start_date', '$user_end_date','1', '$user_level')" ;
 		mysqli_query($db,$sql_user);
+
+		$user_id=mysqli_insert_id($db);
+
+		$sql_user_org = "INSERT INTO ".$db_suffix."batch_teacher (user_id, user_org_name, user_level) VALUES ('".$user_id."', '".$user_org_name."', '".$user_level."')";
+
+		mysqli_query($db,$sql_user_org);
+
 		
 		$dd = mysqli_query($db, "UPDATE ".$db_suffix."codes SET codes_quantity=codes_quantity-1 where codes_id='$codes_id'");
 		
-		$dd = mysqli_query($db, "DELETE FROM ".$db_suffix."indiv_codes where codes_value='$code'");
+		// $dd = mysqli_query($db, "DELETE FROM ".$db_suffix."indiv_codes where codes_value='$code'");
 		
 		$user_email="";
 		$user_name="";

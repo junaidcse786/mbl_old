@@ -422,8 +422,8 @@ if(isset($_POST["Submit"]))
 <html lang="en" class="no-js">
 <!--<![endif]-->
 <!-- BEGIN HEAD -->
-<head>
-<meta charset="utf-8">
+<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
 <title><?php echo $title.' | '.SITE_NAME; ?></title>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta content="width=device-width, initial-scale=1" name="viewport">
@@ -602,7 +602,12 @@ if(isset($_POST["Submit"]))
                             
                             <?php }
 							
-							else {
+                            else if($_SESSION["front_user_status"]==0){
+                                echo '<div class="alert alert-danger">                            
+                            		    Du kannst keine &Uuml;bung zur Zeit machen, weil dein Konto inaktiv ist. Bitte kontaktiere deine Lehrkraft.
+                          			  </div>';
+                            } 
+                            else {
 								
 								echo $exercise_desc;
 								

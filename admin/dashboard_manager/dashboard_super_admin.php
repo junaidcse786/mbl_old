@@ -107,7 +107,7 @@
 							<div class="number">
 								 <?php 
 								 
-								$sql = "select DISTINCT user_org_name from ".$db_suffix."user where user_status = '1' AND user_org_name!=''";				
+								$sql = "select DISTINCT user_org_name from ".$db_suffix."batch_teacher";
 								$query = mysqli_query($db, $sql);
 								
 								$num=mysqli_num_rows($query);

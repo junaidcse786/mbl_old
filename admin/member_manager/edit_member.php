@@ -33,7 +33,22 @@ if(mysqli_num_rows($query) > 0)
 	$user_description= $usr->user_description;
 	$image_old_name=$usr->user_photo;
 	$voc_set_level=$usr->user_level;
+	$codes_org_name .= ' - ' . $usr->user_level;
 	$image_name=$image_old_name;
+
+
+	$sqlBatch = "select * from ".$db_suffix."batch_teacher where user_id = '$user_id'";
+	$queryBatch = mysqli_query($db, $sqlBatch);
+	if(mysqli_num_rows($queryBatch) > 0){
+
+		$codes_org_name = "";
+
+		while($orgObj = mysqli_fetch_object($queryBatch))
+
+			$codes_org_name .= $orgObj->user_org_name . ' - '. $orgObj->user_level. ', ';
+
+		$codes_org_name = substr($codes_org_name, 0, -2);
+	}
 }
 
 
@@ -57,7 +72,7 @@ if(isset($_POST['Submit'])){
 
 	extract($_POST);
 	
-	if(empty($voc_set_level))
+	if($role_id != 15 &&empty($voc_set_level))
 	{
 		$messages["voc_set_level"]["status"]=$err_easy;
 		$messages["voc_set_level"]["msg"]="Batch name / level is required";
@@ -118,10 +133,11 @@ if(isset($_POST['Submit'])){
 		$messages["user_last_name"]["msg"]="Last Name is Required";;
 		$err++;		
 	}
-	if(empty($codes_org_name))
+	
+	if(empty($codes_org_name) || count(explode('-', $codes_org_name))<=1)
 	{
 		$messages["codes_org_name"]["status"]=$err_easy;
-		$messages["codes_org_name"]["msg"]="Organisation Name is Required";;
+		$messages["codes_org_name"]["msg"]="Organisation Name is not complete";;
 		$err++;		
 	}
 	
@@ -151,6 +167,15 @@ if(isset($_POST['Submit'])){
 	}
 	
 	if($err == 0){
+
+		foreach(explode(',', $codes_org_name) as $org){
+
+			$orgArray[] = [
+
+				"org_name" => trim(explode('-', $org)[0]),
+				"level" => trim(explode('-', $org)[1])
+			];
+		}
 		
 		if($_FILES["user_photo"]["name"]!=''){
 			$image_dir = "../data/user/";
@@ -181,24 +206,36 @@ if(isset($_POST['Submit'])){
 									
 									user_trackability  ='$user_trackability',
 									
-									user_photo  ='$image_name',		
-									
-									user_org_name  ='$codes_org_name',
+									user_photo  ='$image_name',
 									
 									user_validity_start  ='$codes_start_date',
 									
 									user_validity_end  ='$codes_end_date',
 
-									user_description ='$user_description', 
-									
-									user_level ='$voc_set_level', 
+									user_description ='$user_description', 									
 									
 									user_status = '$user_status'
 									
 									WHERE user_id = $user_id";
 
 		if(mysqli_query($db,$sql_user))
-		{										
+		{
+			if($role_id == 15){
+			
+				mysqli_query($db,"DELETE FROM ".$db_suffix."batch_teacher WHERE user_id = '$user_id'");
+				
+				$sql_user_org = "INSERT INTO ".$db_suffix."batch_teacher (user_id, user_org_name, user_level) VALUES ";
+
+				foreach($orgArray as $item)
+
+					$sql_user_org.= "('".$user_id."', '".$item['org_name']."', '".$item['level']."'), ";
+
+				$sql_user_org = substr($sql_user_org, 0, -2);
+
+				mysqli_query($db,$sql_user_org);
+			}
+
+			
 			if($_FILES["user_photo"]["name"]!='')
 			
 				{
@@ -313,15 +350,20 @@ if(!isset($_POST["Submit"]) && isset($_GET["s_factor"]))
                               		</div>
                            	  </div>
                               
-                              <div class="form-group <?php echo $messages["codes_org_name"]["status"] ?>">
-                              		<label class="control-label col-md-3" for="codes_org_name">Organisation/school Name <span class="required">*</span></label>
-                              		<div class="col-md-4">
-                                 		<input type="text" placeholder="" class="form-control" name="codes_org_name" value="<?php echo $codes_org_name;?>"/>
-                                 		<span for="codes_org_name" class="help-block">Make sure the school name of the students and their corresponding teachers are exactly the same and also the level.<br /><?php echo $messages["codes_org_name"]["msg"] ?></span>
-                              		</div>
-                           	  </div>
+								 <div class="form-group <?php echo $messages["codes_org_name"]["status"] ?>">
+									<label class="control-label col-md-3" for="codes_org_name">Organisation/school Name <span class="required">*</span></label>
+									<div class="col-md-<?php echo $role_id == 15? "9" : "4" ?>">
+										<input type="text" placeholder="" class="form-control" name="codes_org_name" value="<?php echo $codes_org_name;?>"/>
+											<span for="codes_org_name" class="help-block">Make sure the school name of the students and their corresponding teachers are exactly the same and also the level.
+												<br />Seperate the school name and the language level with a -
+												<br />
+												For more schools and levels, seperate them with a ,
+												e.g. <b>Sprachenstudio Trivium - B1, Sprachenstudio Trivium - A1</b><br /><br /> 
+											<?php echo $messages["codes_org_name"]["msg"] ?></span>
+									</div>
+								</div>
                               
-                              <div class="form-group <?php echo $messages["voc_set_level"]["status"] ?>">
+                              <div class="form-group <?php echo $messages["voc_set_level"]["status"]; echo $role_id == 15? " hide" : ""; ?>">
                                   <label for="voc_set_level" class="control-label col-md-3">  Batch Name / Level</label>
                                   <div class="col-md-4">
                                  		<input type="text" placeholder="e.g. A1/ Gruppe 1 - A1" class="form-control" name="voc_set_level" value="<?php echo $voc_set_level;?>"/>

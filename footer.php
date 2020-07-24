@@ -74,7 +74,7 @@
 	<div class="container">
         <?php echo FOOTER_TEXT; ?>
               <div class="pull-right">
-        		Developed By <a target="_blank" href="http://opterra.uk/">Opterra</a>
+        		Developed By Hossan & Junaid
     		</div>       
 	</div>
 </div>
