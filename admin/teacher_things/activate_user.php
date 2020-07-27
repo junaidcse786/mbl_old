@@ -5,11 +5,11 @@ if(isset($_SESSION["admin_panel"]) && isset($_POST['id'])){
 
 	$id = isset($_POST['id'])?$_POST['id']: 0;
 		
-	if(mysqli_query($db,"UPDATE ".$db_suffix."user SET user_status=1 WHERE user_id =".$id)){
+	if(mysqli_query($db,"UPDATE ".$db_suffix."user SET user_status=1, user_exe_status='0' WHERE user_id =".$id)){
 	
 		$msg = "Reactivation successfull";
 		
-		$sql = "select * from ".$db_suffix."user where user_id = '$id' limit 1";				
+		$sql = "select * from ".$db_suffix."user where user_id = '$id' limit 1";
 		$query = mysqli_query($db, $sql);		
 		if(mysqli_num_rows($query) > 0)
 		{

@@ -105,7 +105,7 @@
 
 						{
 
-						mysqli_query($db, "UPDATE ".$db_suffix."user SET user_exe_status='0' where user_id='".$result1["user_id"]."'");
+						// mysqli_query($db, "UPDATE ".$db_suffix."user SET user_exe_status='0' where user_id='".$result1["user_id"]."'");
 						
 						$_SESSION["logged_in_time"] = date('Y-m-d H:i:s');
 						
